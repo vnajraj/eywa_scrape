@@ -37,7 +37,7 @@ e core version -s 0.1.4
 e core init
 e core super -s admin
 e core start
-e core gen-config
+e core gen-config -j
 e env
 
 python -m venv .venv
@@ -50,5 +50,5 @@ e core version -l
 ```
 ## running commands
 ```
-e run -c "python load.py"
+e run -c "source .venv/bin/activate" -c "python scrape.py"
 ```
