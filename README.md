@@ -37,14 +37,18 @@ e core version -s 0.1.4
 e core init
 e core super -s admin
 e core start
+e core gen-config -j
+e env
+
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 ## other
 ```
-e core config-path
-e core config-schema
 e core version -l
 ```
 ## running commands
 ```
-e run -e local -c "python load.py"
+e run -c "source .venv/bin/activate" -c "python scrape.py"
 ```

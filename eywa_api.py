@@ -1,32 +1,6 @@
 import json, os, requests
+import eywa
 import graphqlclient
-
-SERVER = os.getenv("EYWA_HOST", "http://localhost:8080")
-LOGINURL = SERVER + "/eywa/login"
-GRAPHQLURL = SERVER + "/graphql"
-
-LOGINDATA = {
-    "username": os.getenv("EYWA_USER", "dummy"),
-    "password": os.getenv("EYWA_PASSWORD", "dummy"),
-}
-
-
-def get_token(login=LOGINDATA):
-    r = requests.post(LOGINURL, json=login)
-
-    if r.status_code != 200:
-        raise ValueError("Login failed")
-
-    return r.text
-
-
-TOKEN = get_token(LOGINDATA)
-
-
-def send_query(query, variables=None, token=TOKEN):
-    client = graphqlclient.GraphQLClient(GRAPHQLURL)
-    client.inject_token(token)
-    return client.execute(query=query, variables=variables)
 
 
 def measurement_exists(m):
@@ -46,7 +20,7 @@ def measurement_exists(m):
                 "hour": m["hour"],
                 "station_name": m["station"]
             }
-    return send_query(query, variables=variables)
+    return eywa.graphql({'query': query, 'variables': variables})
 
 
 def sync_measurement(m):
@@ -60,12 +34,12 @@ def sync_measurement(m):
     # model refactored - station now a separate entity
     m["station"] = {"name": m["station"]}
 
-    return send_query(mutation, variables={"measurement": m})
+    return eywa.graphql({'query': mutation, 'variables': {"measurement": m}})
 
 
 def load_measurement(m):
     result = measurement_exists(m)
-    exists = json.loads(result)["data"]["searchMeasurement"]
+    exists = result["data"]["searchMeasurement"]
     if exists:
         return result
 
