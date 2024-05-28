@@ -1,14 +1,19 @@
+input ScrapeHoursInput {
+    start: Int!
+    stop: Int!
+}
+
 type Mutation {
-    dhmzScraper: STDResult
+    dhmzScraperJsonRpc(scrapeHours: ScrapeHoursInput): STDResult
     @robot(
-        euuid: "ce0ade11-56c5-4f67-8190-aaf7a454a1f7"
-        name: "Scrape DHMZ"
+        euuid: "de0ade11-56c5-4f67-8190-aaf7a454a1f7"
+        name: "Scrape DHMZ using JSONRPC"
         task_message: "DHMZ scrape started"
     )
     @execute(commands:[
-        "source .env"
         "make build"
         "make resetenv"
         "make run"
     ])
+    @form_input
 }

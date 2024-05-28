@@ -1,6 +1,6 @@
 import re, requests_html
 
-import model
+import eywa_api, model
 
 URL = "https://meteo.hr/podaci.php?section=podaci_vrijeme&param=hrvatska1_n&sat={hour:02d}"
 
@@ -8,7 +8,10 @@ REGEX = r"^Vrijeme u Hrvatskoj (\d\d.\d\d.\d\d\d\d.) u (\d\d) h$"
 
 
 def get_urls():
-    return (URL.format(hour=hour) for hour in range(24))
+    start, stop = eywa_api.get_scrape_hours()
+    return (
+        URL.format(hour=hour) for hour in range(24) if hour >= start and hour <= stop
+    )
 
 
 def slice(cols, size):
@@ -33,12 +36,17 @@ def scrape_url(url):
 
 
 def main():
-    from eywa_api import load_measurement
+    import eywa
+
+    eywa.info("Scrape started.")
 
     for url in get_urls():
         for m in scrape_url(url):
-            r = load_measurement(m.to_dict())
-            print(r)
+            r = eywa_api.load_measurement(m.to_dict())
+            eywa.info(r)
+
+    eywa.info("Scrape done.")
+    eywa.report("Scrape done.")
 
 
 if __name__ == "__main__":

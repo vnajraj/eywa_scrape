@@ -1,16 +1,28 @@
+# execution environment
+
+Refactored to start using eywa_client library for comms with EYWA - JSONRPC
+over stdout.
+
+To start the script one should run:
+
+```
+e run -e local -c "make run"
+```
+
+Note: the robot definition expects input data:
+```
+"scrapeHours" = {
+    "start" : 0
+    "stop" : 23
+}
+```
+
 # setup/run
 
-1. git clone ...
-2. create .env 
-```
- export EYWA_HOST="http://..."
- export EYWA_USER="..."
- export EYWA_PASSWORD="..."
-```
-3. source .env
-4. load dataset into eywa and deploy
-5. make test
-
+1. load dataset into eywa and deploy
+2. add git repo to eywa using eywa-client branch
+3. add the robot
+4. launch the robot (define both stop and start hours - 0-23)
 
 # data model
 
@@ -19,9 +31,7 @@
 # what's used
 
 1. requests-html for web scraping
-2. requests for fetching token
-3. graphqlclient for loading data into eywa
-
+2. eywa_client for comms with eywa
 
 # misc
 
@@ -46,5 +56,5 @@ e core version -l
 ```
 ## running commands
 ```
-e run -e local -c "python load.py"
+e run -e local -c "source venv/bin/activate" -c "python scrape.py"
 ```
